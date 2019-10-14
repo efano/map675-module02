@@ -12,7 +12,7 @@
 `ogr2ogr tm_routes_4326.shp -t_srs "EPSG:4326" tm_routes.shp`
 
 ### GDAL commmand used to convert WGS84 route shapefile to GeoJSON
-` ogr2ogr -f "GeoJSON" trimet_routes.json tm_routes_4326.shp`
+`ogr2ogr -f "GeoJSON" trimet_routes.json tm_routes_4326.shp`
 
 ### GDAL command to just filter out bus routes from the JSON file
 `ogr2ogr -f "GeoJSON" -where "type='BUS'" trimet_routes_bus.json trimet_routes.json`
