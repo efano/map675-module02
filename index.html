@@ -1,60 +1,106 @@
 <!DOCTYPE html>
 
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
 
-    <title>Module-02</title>
-     
-    <!-- Latest Leaflet Style Sheet-->
-     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
-     integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
-     crossorigin=""
-     />
+<head>
+  <meta charset="utf-8" />
 
-    <style>
-      body,
-      #map {
-        position: absolute;
-        width: 100%;
-        top: 0;
-        bottom: 0;
-        margin: 0;
-        padding: 0;
-        background: rgba(0, 0, 0, 0.75);
+  <title>Module-02</title>
+
+  <!-- Latest Leaflet Style Sheet-->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+    integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+    crossorigin="" />
+
+  <style>
+    body,
+    #map {
+      position: absolute;
+      width: 100%;
+      top: 0;
+      bottom: 0;
+      margin: 0;
+      padding: 0;
+      background: rgba(0, 0, 0, 0.75);
+    }
+  </style>
+</head>
+
+<body>
+  <div id="map"></div>
+
+  <!-- Latest Leaflet Source-->
+  <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+    integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+    crossorigin=""></script>
+
+  <!-- Latest Jquery Source -->
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+
+  <script>
+
+    const options = {
+      center: [45.5, -122.6],
+      zoom: 11,
+      minZoom: 11,
+      maxZoom: 19,
+      maxBounds: [
+        [45.358, -122.259],
+        [45.642, -122.941]
+      ]
+    };
+
+    // Map object
+    const map = L.map("map", options);
+
+    // Base map
+    L.tileLayer(
+      "https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png",
+      {
+        attribution:
+          '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+        subdomains: "abcd",
+        maxZoom: 19
       }
-    </style>
-  </head>
+    ).addTo(map);
 
-  <body>
-    <div id="map"></div>
+    // Style options for layers
+    const frequentOptions = {
+      color: '#ffaa00',
+      weight: .5,
+      opacity: 1
+    }
 
-     <!-- Latest Leaflet Source-->
-     <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
-     integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
-     crossorigin=""></script>
-     
-     <!-- Latest Jquery Source -->
-     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
-     integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"
-     ></script>
+    const nonFrequentOptions = {
+      color: '#ffff00',
+      weight: .2,
+      opacity: 1
+    }
 
-    <script>
-      const options = {
-        center: [40.0, -99.0],
-        zoom: 5
-      };
-      const map = L.map("map", options);
+    // Jquery to load GeoJSON files
+    $.when(
+      $.getJSON('./data/trimet-routes-bus.json')
+    ).done(function (trimetBusRouteData) {
 
-      L.tileLayer(
-        "https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png",
-        {
-          attribution:
-            '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
-          subdomains: "abcd",
-          maxZoom: 19
+      drawMap(trimetBusRouteData)
+    })
+
+    // Function to draw map
+    function drawMap(trimetBusRouteData) {
+
+      L.geoJSON(trimetBusRouteData, {
+        // Style based on whether frequent or not
+        style: function (feature) {
+          // Shorthand variable to access properties of GeoJSON
+          const freq = feature.properties.frequent;
+
+          // Assign the options
+          return freq == 'True' ? frequentOptions : nonFrequentOptions;
         }
-      ).addTo(map);
-    </script>
-  </body>
+      }).addTo(map);
+    }
+  </script>
+</body>
+
 </html>
