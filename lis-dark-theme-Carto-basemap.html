@@ -126,6 +126,12 @@
             className: "animate"
         };
 
+        const busOptions = {
+            color: "#f1c40f",
+            weight: 4,
+            className: "animate",
+        };
+
         const otherRoutes = {
             color: "#090909"
         };
@@ -155,9 +161,10 @@
             $.getJSON("data/rail-stops.json"),
             $.getJSON("data/transit-centers.json"),
             $.getJSON("data/park-and-rides.json"),
+            $.getJSON("data/trimet-routes-bus-freq.json")
         ).done(function (trimetBoundary, trimetRailLine, trimetRailStops, trimetTransitCenters,
-            trimetParkAndRides) {
-            drawMap(trimetBoundary, trimetRailLine, trimetRailStops, trimetTransitCenters, trimetParkAndRides);
+            trimetParkAndRides, trimetBusRoutes) {
+            drawMap(trimetBoundary, trimetRailLine, trimetRailStops, trimetTransitCenters, trimetParkAndRides, trimetBusRoutes);
         });
 
         function drawMap(
@@ -165,7 +172,8 @@
             trimetRailLineData,
             trimetRailStopsData,
             trimetTransitCentersData,
-            trimetParkAndRidesData
+            trimetParkAndRidesData,
+            trimetBusData
         ) {
             // add trimet boundary layer
             L.geoJson(trimetBoundaryData, {
@@ -283,6 +291,20 @@
                 },
                 onEachFeature: function (feature, layer) {
                     let tooltip = feature.properties.name;
+                    // bind the tooltip to the layer
+                    layer.bindTooltip(tooltip, {
+                        sticky: true,
+                        className: "tooltip"
+                    });
+                }
+            }).addTo(map);
+
+            // add trimet bus layer
+            L.geoJson(trimetBusData, {
+                style: busOptions,
+                // Tool tip on hover
+                onEachFeature: function (feature, layer) {
+                    let tooltip = "Route " + feature.properties.public_rte;
                     // bind the tooltip to the layer
                     layer.bindTooltip(tooltip, {
                         sticky: true,
