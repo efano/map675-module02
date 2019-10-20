@@ -5,10 +5,12 @@
 <head>
     <meta charset="utf-8" />
 
-    <title>Carto Dark Theme</title>
+    <title>Portland Trimet</title>
 
     <!-- Latest Leaflet Style Sheet-->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin="" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+        integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+        crossorigin="" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <style>
@@ -23,30 +25,57 @@
             background: rgba(0, 0, 0, 0.8);
         }
 
+        .tooltip {
+            color: #090909;
+            background: #ecf0f1;
+            border: 0;
+            font-size: .8em;
+        }
+
+        .animate:hover {
+            cursor: default;
+            stroke-dasharray: 5, 10;
+            animation: dash 5s linear;
+        }
+
+        @keyframes dash {
+            to {
+                stroke-dashoffset: 100;
+            }
+        }
+
         .transitCenters {
+            cursor: default;
             text-align: center;
             line-height: 16px;
-            color: black;
+            color: #090909;
             font-size: 12px;
-            background: #ccc;
-            box-shadow: 0 0 1px #000;
+            background-color: #bdc3c7;
             border-radius: 50%;
             height: 1em;
             width: 1em;
         }
 
         .transitCenters:hover {
-            text-align: center;
-            line-height: 16px;
-            color: black;
-            font-size: 12px;
-            background: yellow;
-            box-shadow: 0 0 1px #000;
-            border-radius: 50%;
-            height: 1em;
-            width: 1em;
+            color: #090909;
+            background-color: #f1c40f;
         }
 
+        .parking {
+            cursor: default;
+            text-align: center;
+            color: #bdc3c7;
+            font-size: 8px;
+            line-height: 50%;
+            background-color: #090909;
+            background-position: center;
+            border-radius: 50%;
+        }
+
+        .parking:hover {
+            color: #f1c40f;
+            background-color: #090909;
+        }
     </style>
 </head>
 
@@ -54,10 +83,13 @@
     <div id="map"></div>
 
     <!-- Latest Leaflet Source-->
-    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js" integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+        integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+        crossorigin=""></script>
 
     <!-- Latest Jquery Source -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 
     <script>
         const options = {
@@ -65,41 +97,46 @@
             zoom: 11,
             minZoom: 11
         };
+
         const map = L.map("map", options);
 
         const boundaryOptions = {
-            color: "#ccc",
-            weight: 0.5,
-            opacity: 0.3,
-            fillColor: "black",
+            color: "#ecf0f1",
+            weight: 1,
+            opacity: 0.2,
+            fillColor: "#090909",
             fillOpacity: 0.4
         };
 
         const streetcarOptions = {
-            color: "#16a085",
-            weight: 3,
-            opacity: 1
-        };
-        const commuterRailOptions = {
-            color: "#2980b9",
-            weight: 3,
-            opacity: 1
-        };
-        const railOptions = {
-            color: "#e74c3c",
-            weight: 3
-        };
-        const otherRoutes = {
-            color: "#34499"
+            color: "#1abc9c",
+            weight: 4,
+            className: "animate"
         };
 
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}' + (L.Browser.retina ? '@2x.png' : '.png'), {
+        const commuterRailOptions = {
+            color: "#3498db",
+            weight: 4,
+            className: "animate",
+        };
+
+        const lightRailOptions = {
+            color: "#e74c3c",
+            weight: 4,
+            className: "animate"
+        };
+
+        const otherRoutes = {
+            color: "#090909"
+        };
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}' + (L.Browser.retina ? '@2x.png' :
+            '.png'), {
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attributions">CARTO</a>',
             subdomains: 'abcd',
             maxZoom: 20,
             minZoom: 0
         }).addTo(map);
-
 
         map.createPane("labels");
         map.getPane("labels").style.zIndex = 649;
@@ -112,21 +149,23 @@
             }
         ).addTo(map);
 
-
         $.when(
             $.getJSON("data/boundary-inverse.json"),
             $.getJSON("data/rail-lines.json"),
             $.getJSON("data/rail-stops.json"),
             $.getJSON("data/transit-centers.json"),
-        ).done(function(trimetBoundary, trimetRailLine, trimetRailStops, trimetTransitCenters) {
-            drawMap(trimetBoundary, trimetRailLine, trimetRailStops, trimetTransitCenters);
+            $.getJSON("data/park-and-rides.json"),
+        ).done(function (trimetBoundary, trimetRailLine, trimetRailStops, trimetTransitCenters,
+            trimetParkAndRides) {
+            drawMap(trimetBoundary, trimetRailLine, trimetRailStops, trimetTransitCenters, trimetParkAndRides);
         });
 
         function drawMap(
             trimetBoundaryData,
             trimetRailLineData,
             trimetRailStopsData,
-            trimetTransitCentersData
+            trimetTransitCentersData,
+            trimetParkAndRidesData
         ) {
             // add trimet boundary layer
             L.geoJson(trimetBoundaryData, {
@@ -136,8 +175,7 @@
             // add trimet rail line layer
             L.geoJson(trimetRailLineData, {
                 // style each feature
-                style: function(feature) {
-                    // shortcut to variable
+                style: function (feature) {
                     let type = feature.properties.type;
                     // assign options
                     return type === "Portland Streetcar" ?
@@ -145,45 +183,31 @@
                         type === "WES Commuter Rail" ?
                         commuterRailOptions :
                         type === "MAX Light Rail" ?
-                        railOptions :
+                        lightRailOptions :
                         otherRoutes;
                 },
-                onEachFeature: function(feature, layer) {
-                    // shortut to variable
+                onEachFeature: function (feature, layer) {
                     let tooltip = feature.properties.type;
                     // bind the tooltip to the layer
                     layer.bindTooltip(tooltip, {
                         sticky: true,
                         className: "tooltip"
                     });
-                    // mouseover
-                    layer.on('mouseover', function() {
-                        layer.setStyle({
-                            weight: 7
-                        });
-                    });
-                    // mouseout
-                    layer.on('mouseout', function() {
-                        layer.setStyle({
-                            weight: 3
-                        });
-                    });
                 }
             }).addTo(map);
 
             // add trimet rail stops layer
             const railStops = L.geoJson(trimetRailStopsData, {
-                pointToLayer: function(feature, latlng) {
+                pointToLayer: function (feature, latlng) {
                     return L.circleMarker(latlng, {
-                        color: '#555',
+                        color: '#090909',
                         weight: 1,
-                        fillColor: '#ccc',
+                        fillColor: '#f1c40f',
                         fillOpacity: 1,
                         radius: 2
                     });
                 },
-                onEachFeature: function(feature, layer) {
-                    // shortut to variable
+                onEachFeature: function (feature, layer) {
                     let tooltip = feature.properties.STATION;
                     // bind the tooltip to the layer
                     layer.bindTooltip(tooltip, {
@@ -191,21 +215,21 @@
                         className: "tooltip"
                     });
                     // mouseover
-                    layer.on('mouseover', function() {
+                    layer.on('mouseover', function () {
                         layer.setStyle({
-                            color: '#ccc',
+                            color: '#f1c40f',
                             weight: 2,
-                            fillColor: '#333',
+                            fillColor: '#f1c40f',
                             fillOpacity: 0.5,
-                            radius: 8
+                            radius: 10
                         });
                     });
                     // mouseout
-                    layer.on('mouseout', function() {
+                    layer.on('mouseout', function () {
                         layer.setStyle({
-                            color: '#555',
+                            color: '#090909',
                             weight: 1,
-                            fillColor: '#ccc',
+                            fillColor: '#f1c40f',
                             fillOpacity: 1,
                             radius: 2
                         });
@@ -213,6 +237,7 @@
                 }
             });
 
+            // show/hide railStops layer
             map.on('zoomend', onZoomend);
 
             function onZoomend() {
@@ -224,9 +249,30 @@
                 };
             };
 
+            // add park and ride layer
+            L.geoJson(trimetParkAndRidesData, {
+                pointToLayer: function (feature, latlng) {
+                    return L.marker(latlng, {
+                        icon: L.divIcon({
+                            html: '<i class="fa fa-product-hunt"></i>',
+                            iconSize: [10, 10],
+                            className: 'parking'
+                        })
+                    });
+                },
+                onEachFeature: function (feature, layer) {
+                    let tooltip = feature.properties.name;
+                    // bind the tooltip to the layer
+                    layer.bindTooltip(tooltip, {
+                        sticky: true,
+                        className: "tooltip"
+                    });
+                }
+            }).addTo(map);
+
             // add trimet transit centers layer
             L.geoJson(trimetTransitCentersData, {
-                pointToLayer: function(feature, latlng) {
+                pointToLayer: function (feature, latlng) {
                     return L.marker(latlng, {
                         icon: L.divIcon({
                             html: '<i class="fa fa-bus"></i>',
@@ -235,8 +281,7 @@
                         })
                     });
                 },
-                onEachFeature: function(feature, layer) {
-                    // shortut to variable
+                onEachFeature: function (feature, layer) {
                     let tooltip = feature.properties.name;
                     // bind the tooltip to the layer
                     layer.bindTooltip(tooltip, {
@@ -246,7 +291,6 @@
                 }
             }).addTo(map);
         }
-
     </script>
 </body>
 
