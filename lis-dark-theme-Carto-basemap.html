@@ -34,8 +34,9 @@
 
         .animate:hover {
             cursor: default;
-            stroke-dasharray: 5, 10;
-            animation: dash 5s linear;
+            stroke-dasharray: 5, 8;
+            -webkit-animation: dash 5s infinite linear;
+            animation: dash 5s infinite linear;
         }
 
         @keyframes dash {
@@ -111,7 +112,7 @@
         const streetcarOptions = {
             color: "#1abc9c",
             weight: 4,
-            className: "animate"
+            className: "animate",
         };
 
         const commuterRailOptions = {
@@ -237,7 +238,7 @@
                 }
             });
 
-            // show/hide railStops layer
+            // show/hide railStops layer on zoom levels
             map.on('zoomend', onZoomend);
 
             function onZoomend() {

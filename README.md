@@ -2,6 +2,10 @@
 
 ## Lis Fano and Matthew Bacinskas
 
+### Created master repository
+
+### Added empty data folder, README.md file, and index.html file
+
 ### Curl command used to download all the TriMet zip files
 `curl -Lk --remote-name-all https://developer.trimet.org/gis/data/{tm_boundary,tm_parkride,tm_rail_lines,tm_rail_stops,tm_routes,tm_stops,tm_route_stops,tm_tran_cen}.zip`
 
@@ -16,4 +20,10 @@
 
 ### GDAL command to just filter out bus routes from the JSON file
 `ogr2ogr -f "GeoJSON" -where "type='BUS'" trimet_routes_bus.json trimet_routes.json`
+
+### Reduced file sizes using Mapshaper
+
+### Created 4 prototype web maps to compare different basemaps styles
+
+### Combined work into master index.html file
 
