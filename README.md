@@ -1,6 +1,9 @@
 # MAP 675 module-02
 
-## Lis Fano and Matthew Bacinskas
+## Portland bus, light rail and commuter rail services
+## By Lis Fano and Matthew Bacinskas
+## Data Source: Portland [TriMet](https://developer.trimet.org/gis/)
+
 
 ### Curl command used to download all the TriMet zip files
 `curl -Lk --remote-name-all https://developer.trimet.org/gis/data/{tm_boundary,tm_parkride,tm_rail_lines,tm_rail_stops,tm_routes,tm_stops,tm_route_stops,tm_tran_cen}.zip`
