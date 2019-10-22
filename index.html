@@ -1,60 +1,380 @@
 <!DOCTYPE html>
 
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="utf-8" />
 
-    <title>Module-02</title>
-     
+    <title>Portland Trimet</title>
+
     <!-- Latest Leaflet Style Sheet-->
-     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
-     integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
-     crossorigin=""
-     />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin="" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <style>
-      body,
-      #map {
-        position: absolute;
-        width: 100%;
-        top: 0;
-        bottom: 0;
-        margin: 0;
-        padding: 0;
-        background: rgba(0, 0, 0, 0.75);
-      }
-    </style>
-  </head>
+        body,
+        #map {
+            position: absolute;
+            width: 100%;
+            top: 0;
+            bottom: 0;
+            margin: 0;
+            padding: 0;
+            background: rgba(0, 0, 0, 0.8);
+        }
 
-  <body>
+        .tooltip {
+            color: #090909;
+            background: #ecf0f1;
+            border: 0;
+            font-size: .8em;
+        }
+
+        .animate:hover {
+            cursor: default;
+            stroke-dasharray: 5, 8;
+            -webkit-animation: dash 5s infinite linear;
+            animation: dash 5s infinite linear;
+        }
+
+        @keyframes dash {
+            to {
+                stroke-dashoffset: 100;
+            }
+        }
+
+        .busAnimate:hover {
+            cursor: default;
+            stroke-width: 4;
+            stroke: #f1c40f;
+            stroke-dasharray: 2, 4;
+            stroke-opacity: 1.0;
+            -webkit-animation: dash 7s infinite linear;
+            animation: dash 7s infinite linear;
+        }
+
+        @keyframes dash {
+            to {
+                stroke-dashoffset: 100;
+            }
+        }
+
+        .transitCenters {
+            cursor: default;
+            text-align: center;
+            line-height: 16px;
+            color: #090909;
+            font-size: 12px;
+            background-color: #bdc3c7;
+            border-radius: 50%;
+            height: 1em;
+            width: 1em;
+        }
+
+        .transitCenters:hover {
+            color: #090909;
+            background-color: #f1c40f;
+        }
+
+        .parking {
+            cursor: default;
+            text-align: center;
+            color: #bdc3c7;
+            font-size: 8px;
+            line-height: 50%;
+            background-color: #090909;
+            background-position: center;
+            border-radius: 50%;
+        }
+
+        .parking:hover {
+            color: #f1c40f;
+            background-color: #090909;
+        }
+
+    </style>
+</head>
+
+<body>
     <div id="map"></div>
 
-     <!-- Latest Leaflet Source-->
-     <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
-     integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
-     crossorigin=""></script>
-     
-     <!-- Latest Jquery Source -->
-     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
-     integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"
-     ></script>
+    <!-- Latest Leaflet Source-->
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js" integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
+
+    <!-- Latest Jquery Source -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 
     <script>
-      const options = {
-        center: [40.0, -99.0],
-        zoom: 5
-      };
-      const map = L.map("map", options);
+        const options = {
+            center: [45.46, -122.684],
+            zoom: 11,
+            minZoom: 11
+        };
 
-      L.tileLayer(
-        "https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png",
-        {
-          attribution:
-            '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
-          subdomains: "abcd",
-          maxZoom: 19
+        const map = L.map("map", options);
+
+        const boundaryOptions = {
+            color: "#ecf0f1",
+            weight: 1,
+            opacity: 0.2,
+            fillColor: "#090909",
+            fillOpacity: 0.5
+        };
+
+        const streetcarOptions = {
+            color: "#3498db",
+            weight: 4,
+            className: "animate",
+        };
+
+        const commuterRailOptions = {
+            color: "#e74c3c",
+            weight: 4,
+            className: "animate",
+        };
+
+        const lightRailOptions = {
+            color: "#e67e22",
+            weight: 4,
+            className: "animate"
+        };
+
+        const busOptions = {
+            color: "#16a085",
+            weight: 2,
+            className: "busAnimate",
+            opacity: 0.8,
+        };
+
+        const otherRoutes = {
+            color: "#090909"
+        };
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}' + (L.Browser.retina ? '@2x.png' :
+            '.png'), {
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 20,
+            minZoom: 0
+        }).addTo(map);
+
+        map.createPane("labels");
+        map.getPane("labels").style.zIndex = 649;
+        map.getPane("labels").style.pointerEvents = "none";
+        L.tileLayer(
+            "https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png", {
+                attribution: "©OpenStreetMap, ©CartoDB",
+                pane: "labels"
+            }
+        ).addTo(map);
+
+        $.when(
+            $.getJSON("data/boundary-inverse.json"),
+            $.getJSON("data/rail-lines.json"),
+            $.getJSON("data/rail-stops.json"),
+            $.getJSON("data/transit-centers.json"),
+            $.getJSON("data/park-and-rides.json"),
+            $.getJSON("data/bus-routes-dissolved.json"),
+            $.getJSON("data/bus-stops-frequent.json"),
+        ).done(function (trimetBoundary, trimetRailLine, trimetRailStops, trimetTransitCenters,
+            trimetParkAndRides, trimetBusRoutes, trimetFreqBusStops) {
+            drawMap(trimetBoundary, trimetRailLine, trimetRailStops, trimetTransitCenters, trimetParkAndRides, trimetBusRoutes, trimetFreqBusStops);
+        });
+
+        function drawMap(
+            trimetBoundaryData,
+            trimetRailLineData,
+            trimetRailStopsData,
+            trimetTransitCentersData,
+            trimetParkAndRidesData,
+            trimetBusData,
+            trimetFreqBusStopData
+        ) {
+            // add trimet boundary layer
+            L.geoJson(trimetBoundaryData, {
+                style: boundaryOptions
+            }).addTo(map);
+
+            // add trimet bus layer
+            L.geoJson(trimetBusData, {
+                style: busOptions,
+                // Tool tip on hover
+                onEachFeature: function(feature, layer) {
+                    let tooltip = "Route " + feature.properties.public_rte;
+                    // bind the tooltip to the layer
+                    layer.bindTooltip(tooltip, {
+                        sticky: true,
+                        className: "tooltip"
+                    });
+                }
+            }).addTo(map);
+
+            // add trimet freq bus stop layer
+            const freqBusStops = L.geoJson(trimetFreqBusStopData, {
+                pointToLayer: function (feature, latlng) {
+                    return L.circleMarker(latlng, {
+                        color: '#090909',
+                            weight: 1,
+                            fillColor: '#bdc3c7',
+                            fillOpacity: 1,
+                            radius: 2
+                    });
+                },
+                onEachFeature: function (feature, layer) {
+                    let tooltip = feature.properties.stop_name;
+                    // bind the tooltip to the layer
+                    layer.bindTooltip(tooltip, {
+                        sticky: true,
+                        className: "tooltip"
+                    });
+                    // mouseover
+                    layer.on('mouseover', function () {
+                        layer.setStyle({
+                            color: '#f1c40f',
+                            weight: 2,
+                            fillColor: '#f1c40f',
+                            fillOpacity: 0.5,
+                            radius: 10
+                        });
+                    });
+                    // mouseout
+                    layer.on('mouseout', function () {
+                        layer.setStyle({
+                            color: '#090909',
+                            weight: 1,
+                            fillColor: '#bdc3c7',
+                            fillOpacity: 1,
+                            radius: 2
+                        });
+                    });
+                }
+            });
+
+            // add trimet rail line layer
+            L.geoJson(trimetRailLineData, {
+                // style each feature
+                style: function(feature) {
+                    let type = feature.properties.type;
+                    // assign options
+                    return type === "Portland Streetcar" ?
+                        streetcarOptions :
+                        type === "WES Commuter Rail" ?
+                        commuterRailOptions :
+                        type === "MAX Light Rail" ?
+                        lightRailOptions :
+                        otherRoutes;
+                },
+                onEachFeature: function(feature, layer) {
+                    let tooltip = feature.properties.type;
+                    // bind the tooltip to the layer
+                    layer.bindTooltip(tooltip, {
+                        sticky: true,
+                        className: "tooltip"
+                    });
+                }
+            }).addTo(map);
+
+            // add trimet rail stops layer
+            const railStops = L.geoJson(trimetRailStopsData, {
+                pointToLayer: function(feature, latlng) {
+                    return L.circleMarker(latlng, {
+                        color: '#090909',
+                        weight: 1,
+                        fillColor: '#f1c40f',
+                        fillOpacity: 1,
+                        radius: 2
+                    });
+                },
+                onEachFeature: function(feature, layer) {
+                    let tooltip = feature.properties.STATION;
+                    // bind the tooltip to the layer
+                    layer.bindTooltip(tooltip, {
+                        sticky: true,
+                        className: "tooltip"
+                    });
+                    // mouseover
+                    layer.on('mouseover', function() {
+                        layer.setStyle({
+                            color: '#f1c40f',
+                            weight: 2,
+                            fillColor: '#f1c40f',
+                            fillOpacity: 0.5,
+                            radius: 10
+                        });
+                    });
+                    // mouseout
+                    layer.on('mouseout', function() {
+                        layer.setStyle({
+                            color: '#090909',
+                            weight: 1,
+                            fillColor: '#f1c40f',
+                            fillOpacity: 1,
+                            radius: 2
+                        });
+                    });
+                }
+            });
+            
+            // add park and ride layer
+            L.geoJson(trimetParkAndRidesData, {
+                pointToLayer: function(feature, latlng) {
+                    return L.marker(latlng, {
+                        icon: L.divIcon({
+                            html: '<i class="fa fa-product-hunt"></i>',
+                            iconSize: [10, 10],
+                            className: 'parking'
+                        })
+                    });
+                },
+                onEachFeature: function(feature, layer) {
+                    let tooltip = feature.properties.name;
+                    // bind the tooltip to the layer
+                    layer.bindTooltip(tooltip, {
+                        sticky: true,
+                        className: "tooltip"
+                    });
+                }
+            }).addTo(map);
+
+            // add trimet transit centers layer
+            L.geoJson(trimetTransitCentersData, {
+                pointToLayer: function(feature, latlng) {
+                    return L.marker(latlng, {
+                        icon: L.divIcon({
+                            html: '<i class="fa fa-bus"></i>',
+                            iconSize: [16, 16],
+                            className: 'transitCenters'
+                        })
+                    });
+                },
+                onEachFeature: function(feature, layer) {
+                    let tooltip = feature.properties.name;
+                    // bind the tooltip to the layer
+                    layer.bindTooltip(tooltip, {
+                        sticky: true,
+                        className: "tooltip"
+                    });
+                }
+            }).addTo(map);
+
+            // Array of layers we want to hide depending on zoom
+            const layersToShowHide = [railStops, freqBusStops]
+            layersToShowHide.forEach(function (item) {
+                // show/hide freq bus stop and rail stop layers
+                map.on('zoomend', onZoomend);
+
+                function onZoomend() {
+                    if (map.getZoom() < 12) {
+                        map.removeLayer(item);
+                    };
+                    if (map.getZoom() >= 12) {
+                        map.addLayer(item);
+                    };
+                };
+            });
         }
-      ).addTo(map);
+
     </script>
-  </body>
+</body>
+
 </html>
