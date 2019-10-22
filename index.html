@@ -8,7 +8,9 @@
     <title>Portland Trimet</title>
 
     <!-- Latest Leaflet Style Sheet-->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin="" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+        integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+        crossorigin="" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <style>
@@ -92,6 +94,28 @@
             background-color: #090909;
         }
 
+        .legend {
+            padding: 6px 8px;
+            font: 14px Arial, Helvetica, sans-serif;
+            background: rgba(255, 255, 255, 0.8);
+            line-height: 24px;
+            color: #555;
+        }
+
+        .legend h4 {
+            text-align: center;
+            font-size: 16px;
+            margin: 2px 12px 8px;
+            color: #777;
+        }
+
+        .legend i {
+            width: 18px;
+            height: 18px;
+            float: left;
+            margin: 0 8px 0 0;
+            opacity: 0.7;
+        }
     </style>
 </head>
 
@@ -99,10 +123,13 @@
     <div id="map"></div>
 
     <!-- Latest Leaflet Source-->
-    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js" integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+        integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+        crossorigin=""></script>
 
     <!-- Latest Jquery Source -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 
     <script>
         const options = {
@@ -163,9 +190,9 @@
         map.getPane("labels").style.pointerEvents = "none";
         L.tileLayer(
             "https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png", {
-                attribution: "©OpenStreetMap, ©CartoDB",
-                pane: "labels"
-            }
+            attribution: "©OpenStreetMap, ©CartoDB",
+            pane: "labels"
+        }
         ).addTo(map);
 
         $.when(
@@ -179,6 +206,7 @@
         ).done(function (trimetBoundary, trimetRailLine, trimetRailStops, trimetTransitCenters,
             trimetParkAndRides, trimetBusRoutes, trimetFreqBusStops) {
             drawMap(trimetBoundary, trimetRailLine, trimetRailStops, trimetTransitCenters, trimetParkAndRides, trimetBusRoutes, trimetFreqBusStops);
+            drawLegend();
         });
 
         function drawMap(
@@ -199,7 +227,7 @@
             L.geoJson(trimetBusData, {
                 style: busOptions,
                 // Tool tip on hover
-                onEachFeature: function(feature, layer) {
+                onEachFeature: function (feature, layer) {
                     let tooltip = "Route " + feature.properties.public_rte;
                     // bind the tooltip to the layer
                     layer.bindTooltip(tooltip, {
@@ -214,10 +242,10 @@
                 pointToLayer: function (feature, latlng) {
                     return L.circleMarker(latlng, {
                         color: '#090909',
-                            weight: 1,
-                            fillColor: '#bdc3c7',
-                            fillOpacity: 1,
-                            radius: 2
+                        weight: 1,
+                        fillColor: '#bdc3c7',
+                        fillOpacity: 1,
+                        radius: 2
                     });
                 },
                 onEachFeature: function (feature, layer) {
@@ -253,18 +281,18 @@
             // add trimet rail line layer
             L.geoJson(trimetRailLineData, {
                 // style each feature
-                style: function(feature) {
+                style: function (feature) {
                     let type = feature.properties.type;
                     // assign options
                     return type === "Portland Streetcar" ?
                         streetcarOptions :
                         type === "WES Commuter Rail" ?
-                        commuterRailOptions :
-                        type === "MAX Light Rail" ?
-                        lightRailOptions :
-                        otherRoutes;
+                            commuterRailOptions :
+                            type === "MAX Light Rail" ?
+                                lightRailOptions :
+                                otherRoutes;
                 },
-                onEachFeature: function(feature, layer) {
+                onEachFeature: function (feature, layer) {
                     let tooltip = feature.properties.type;
                     // bind the tooltip to the layer
                     layer.bindTooltip(tooltip, {
@@ -276,7 +304,7 @@
 
             // add trimet rail stops layer
             const railStops = L.geoJson(trimetRailStopsData, {
-                pointToLayer: function(feature, latlng) {
+                pointToLayer: function (feature, latlng) {
                     return L.circleMarker(latlng, {
                         color: '#090909',
                         weight: 1,
@@ -285,7 +313,7 @@
                         radius: 2
                     });
                 },
-                onEachFeature: function(feature, layer) {
+                onEachFeature: function (feature, layer) {
                     let tooltip = feature.properties.STATION;
                     // bind the tooltip to the layer
                     layer.bindTooltip(tooltip, {
@@ -293,7 +321,7 @@
                         className: "tooltip"
                     });
                     // mouseover
-                    layer.on('mouseover', function() {
+                    layer.on('mouseover', function () {
                         layer.setStyle({
                             color: '#f1c40f',
                             weight: 2,
@@ -303,7 +331,7 @@
                         });
                     });
                     // mouseout
-                    layer.on('mouseout', function() {
+                    layer.on('mouseout', function () {
                         layer.setStyle({
                             color: '#090909',
                             weight: 1,
@@ -314,10 +342,10 @@
                     });
                 }
             });
-            
+
             // add park and ride layer
             L.geoJson(trimetParkAndRidesData, {
-                pointToLayer: function(feature, latlng) {
+                pointToLayer: function (feature, latlng) {
                     return L.marker(latlng, {
                         icon: L.divIcon({
                             html: '<i class="fa fa-product-hunt"></i>',
@@ -326,7 +354,7 @@
                         })
                     });
                 },
-                onEachFeature: function(feature, layer) {
+                onEachFeature: function (feature, layer) {
                     let tooltip = feature.properties.name;
                     // bind the tooltip to the layer
                     layer.bindTooltip(tooltip, {
@@ -338,7 +366,7 @@
 
             // add trimet transit centers layer
             L.geoJson(trimetTransitCentersData, {
-                pointToLayer: function(feature, latlng) {
+                pointToLayer: function (feature, latlng) {
                     return L.marker(latlng, {
                         icon: L.divIcon({
                             html: '<i class="fa fa-bus"></i>',
@@ -347,7 +375,7 @@
                         })
                     });
                 },
-                onEachFeature: function(feature, layer) {
+                onEachFeature: function (feature, layer) {
                     let tooltip = feature.properties.name;
                     // bind the tooltip to the layer
                     layer.bindTooltip(tooltip, {
@@ -372,6 +400,27 @@
                     };
                 };
             });
+        }
+
+        // Function to draw the legend
+        function drawLegend() {
+            // Leaflet control object for our legend
+            var legend = L.control({ position: 'topright' });
+            // Anonymous function to create html elements for legend
+            legend.onAdd = function (map) {
+                var div = L.DomUtil.create('div', 'legend');
+
+                div.innerHTML += "<h4>Portland Trimet Transit Options</h4>";
+                div.innerHTML += '<i style="background: #e74c3c"></i><span>WES Commuter Rail</span><br>';
+                div.innerHTML += '<i style="background: #e67e22"></i><span>MAX Light Rail</span><br>';
+                div.innerHTML += '<i style="background: #3498db"></i><span>Portland Streetcar</span><br>';
+                div.innerHTML += '<i style="background: #16a085"></i><span>Bus</span><br>';
+                div.innerHTML += '<i class="fa fa-bus"></i><span>Transit Center</span><br>';
+                div.innerHTML += '<i class="fa fa-product-hunt"></i><span>Park and Ride</span><br>';
+
+                return div;
+            };
+            legend.addTo(map);
         }
 
     </script>
