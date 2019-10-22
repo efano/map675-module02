@@ -20,3 +20,8 @@
 ### GDAL command to just filter out bus routes from the JSON file
 `ogr2ogr -f "GeoJSON" -where "type='BUS'" trimet_routes_bus.json trimet_routes.json`
 
+### Reduced file sizes using Mapshaper
+
+### Created 4 prototype web maps to compare different basemap styles
+
+### Combined work into master index.html file
