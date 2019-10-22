@@ -364,10 +364,10 @@
                 map.on('zoomend', onZoomend);
 
                 function onZoomend() {
-                    if (map.getZoom() < 12) {
+                    if (map.getZoom() < 13) {
                         map.removeLayer(item);
                     };
-                    if (map.getZoom() >= 12) {
+                    if (map.getZoom() >= 13) {
                         map.addLayer(item);
                     };
                 };
